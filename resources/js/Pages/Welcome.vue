@@ -1,4 +1,21 @@
+<script>
+import { Head } from '@inertiajs/vue3';
+
+export default {
+    name: "WelcomePage",
+    methods: {
+        navigateToProducts() {
+            window.location.href = "/products";
+        },
+        navigateToAbouts() {
+            window.location.href = "/abouts";
+        },
+    },
+};
+</script>
+
 <template>
+        
     <div class="welcome-container flex flex-col min-h-screen">
         <header class="navbar w-full bg-gray-100 p-4">
             <nav class="flex justify-between items-center">
@@ -47,13 +64,13 @@
                     Nos complace que nos visites. Descubre nuestros deliciosos
                     cafés y más.
                 </p>
-                <button
+                <button disabled
                     class="mt-6 bg-blue-600 hover:bg-blue-700 text-white font-medium mx-2 py-3 px-6 rounded-lg shadow-lg transition"
                     @click="navigateToProducts"
                 >
                     Productos
                 </button>
-                <button
+                <button disabled
                     class="mt-6 bg-blue-600 hover:bg-blue-700 text-white font-medium mx-2 py-3 px-6 rounded-lg shadow-lg transition"
                     @click="navigateToAbouts"
                 >
@@ -89,20 +106,6 @@
         </footer>
     </div>
 </template>
-
-<script>
-export default {
-    name: "WelcomePage",
-    methods: {
-        navigateToProducts() {
-            window.location.href = "/products";
-        },
-        navigateToAbouts() {
-            window.location.href = "/abouts";
-        },
-    },
-};
-</script>
 
 <style scoped>
 .hero {
