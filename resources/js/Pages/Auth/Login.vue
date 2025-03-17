@@ -1,15 +1,13 @@
 <script setup>
-import Checkbox from "@/Components/Checkbox.vue";
 import GuestLayout from "@/Layouts/GuestLayout.vue";
 import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
 import { Head, Link, useForm } from "@inertiajs/vue3";
-import VueRecaptcha from "vue-recaptcha";
 import { onMounted } from "vue";
 
-defineProps({
+const props = defineProps({
     canResetPassword: Boolean,
     status: String,
     recaptchaSiteKey: String,
@@ -18,30 +16,29 @@ defineProps({
 const form = useForm({
     email: "",
     password: "",
-    remember: false,
     recaptcha_token: "",
 });
 
-const onVerify = (response) => {
-    form.recaptcha_token = response;
-};
-
-const onError = () => {
-    console.error("Error en reCAPTCHA");
-};
-
-const onExpired = () => {
-    console.warn("reCAPTCHA expirado");
-};
-
 const submit = () => {
+    // Obtén el token de reCAPTCHA del widget
+    form.recaptcha_token = window.grecaptcha.getResponse();
+    if (!form.recaptcha_token) {
+        alert("Por favor, completa el reCAPTCHA.");
+        return;
+    }
+
+    // Envía el formulario
     form.post(route("login"), {
-        onFinish: () => form.reset("password"),
+        onFinish: () => form.reset("password"), // Restablece el campo de contraseña después del envío
     });
 };
 
 onMounted(() => {
-    // Lógica adicional si es necesario
+    const script = document.createElement("script");
+    script.src = `https://www.google.com/recaptcha/api.js`;
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
 });
 </script>
 
@@ -85,18 +82,12 @@ onMounted(() => {
                 <InputError class="mt-2" :message="form.errors.password" />
             </div>
 
-            <div class="block mt-4">
-                <label class="flex items-center">
-                    <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ml-2 text-sm text-gray-600"
-                        >Recordar datos</span
-                    >
-                </label>
-            </div>
-
-            <!-- Componente reCAPTCHA -->
-            <div class="form-group">
-                {!! htmlFormSnippet() !!}
+            <div class="mt-4">
+                <div
+                    class="g-recaptcha"
+                    :data-sitekey="recaptchaSiteKey"
+                ></div>
+                <InputError class="mt-2" :message="form.errors.recaptcha_token" />
             </div>
 
             <div class="flex items-center justify-end mt-4">

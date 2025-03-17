@@ -18,8 +18,6 @@
         "vue": "^3.2.41"
     },
     "dependencies": {
-        "@unhead/vue": "^1.11.18",
-        "vue-recaptcha": "^3.0.0-alpha.6",
-        "vue-recaptcha-v3": "^2.0.1"
+        "@unhead/vue": "^1.11.18"
     }
 }

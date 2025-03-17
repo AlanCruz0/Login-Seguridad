@@ -52,9 +52,6 @@ export default {
 
         <section
             class="hero bg-cover bg-center py-20"
-            style="
-                background-image: url('https://via.placeholder.com/1200x500');
-            "
         >
             <div class="container mx-auto text-center text-brown-900">
                 <h1 class="text-4xl md:text-6xl font-bold drop-shadow-md">
