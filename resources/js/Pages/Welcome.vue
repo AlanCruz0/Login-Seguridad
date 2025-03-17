@@ -21,7 +21,7 @@ export default {
             <nav class="flex justify-between items-center">
                 <a href="/" class="flex items-center space-x-3">
                     <img
-                        src="/images/Logo.webp"
+                        src="/images/logo.webp"
                         alt="Coffee G Logo"
                         class="h-12 w-12 object-contain"
                     />
