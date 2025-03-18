@@ -20,16 +20,14 @@ const form = useForm({
 });
 
 const submit = () => {
-    // Obtén el token de reCAPTCHA del widget
     form.recaptcha_token = window.grecaptcha.getResponse();
     if (!form.recaptcha_token) {
         alert("Por favor, completa el reCAPTCHA.");
         return;
     }
 
-    // Envía el formulario
     form.post(route("login"), {
-        onFinish: () => form.reset("password"), // Restablece el campo de contraseña después del envío
+        onFinish: () => form.reset("password"),
     });
 };
 
