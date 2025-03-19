@@ -27,7 +27,10 @@ const submit = () => {
     }
 
     form.post(route("login"), {
-        onFinish: () => form.reset("password"),
+        onFinish: () => {
+            form.reset("password");
+            window.grecaptcha.reset();
+        },
     });
 };
 
@@ -82,6 +85,7 @@ onMounted(() => {
 
             <div class="mt-4">
                 <div
+                    id="recaptcha"
                     class="g-recaptcha"
                     :data-sitekey="recaptchaSiteKey"
                 ></div>
