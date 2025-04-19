@@ -75,7 +75,6 @@ class AuthenticatedSessionController extends Controller
         Auth::guard('web')->logout();
 
         $user = Auth::user();
-        $user->verification_token_expires_at = null;
         $user->email_verified_at = null;
         $user->save();
 

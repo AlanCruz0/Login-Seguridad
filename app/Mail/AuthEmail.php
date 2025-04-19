@@ -13,6 +13,7 @@ class AuthEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $code;
     /**
      * Create a new message instance.
      *
@@ -20,7 +21,7 @@ class AuthEmail extends Mailable
      */
     public function __construct()
     {
-        //
+        $this->code = random_int(100000, 999999);
     }
 
     /**
