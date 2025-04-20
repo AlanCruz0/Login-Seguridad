@@ -13,48 +13,24 @@ class AuthEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $code;
+    public $number;
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(int $number)
     {
-        $this->code = random_int(100000, 999999);
+        $this->number = $number;
     }
 
     /**
-     * Get the message envelope.
+     * Build the message.
      *
-     * @return \Illuminate\Mail\Mailables\Envelope
+     * @return $this
      */
-    public function envelope()
+    public function build()
     {
-        return new Envelope(
-            subject: 'Auth Email',
-        );
-    }
-
-    /**
-     * Get the message content definition.
-     *
-     * @return \Illuminate\Mail\Mailables\Content
-     */
-    public function content()
-    {
-        return new Content(
-            view: 'view.name',
-        );
-    }
-
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array
-     */
-    public function attachments()
-    {
-        return [];
+        return $this->view('emails.verifyemail', ['code' => $this->number]);
     }
 }

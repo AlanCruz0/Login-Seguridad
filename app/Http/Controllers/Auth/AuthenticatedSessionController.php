@@ -11,9 +11,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
-use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\AuthEmail;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -36,7 +38,7 @@ class AuthenticatedSessionController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
-            'password' => 'required',
+            'password' => 'required|string|min:8|max:60',
             'recaptcha_token' => 'required',
         ]);
     
@@ -58,7 +60,8 @@ class AuthenticatedSessionController extends Controller
 
         $user = Auth::user();
 
-        $user->verification_token = Str::random(60);
+        $email = $request->email;
+        $correoEnviado = $this->enviarCorreo($email);
 
         $user->verification_token_expires_at = Carbon::now()->addMinutes(10);
 
@@ -83,5 +86,27 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/');
+    }
+
+    public function enviarCorreo(string $email)
+    {
+        $emailExist = DB::table('verify_email')->where('email', $email)->first();
+        if ($emailExist)
+            DB::table('verify_email')->where('email', $email)->delete();
+
+        $number = rand(1000, 9999);
+
+        DB::table('verify_email')->insert([
+            'codigo' => $number,
+            'email' => $email
+        ]);
+
+        Mail::to($email)->send(new AuthEmail($number));
+
+        return response()->json([
+            'msg' => 'Correo enviado',
+            'data' => $email,
+            'status' => 201
+        ], 201);
     }
 }

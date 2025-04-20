@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\Http;
 
 class RegisteredUserController extends Controller
 {
@@ -21,7 +22,10 @@ class RegisteredUserController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('Auth/Register');
+        return Inertia::render('Auth/Register', [
+            'status' => session('status'),
+            'recaptchaSiteKey' => config('services.recaptcha.site_key'),
+        ]);
     }
 
     /**
@@ -35,7 +39,20 @@ class RegisteredUserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'recaptcha_token' => 'required',
         ]);
+
+        // Verificar el token de reCAPTCHA
+        $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+            'secret' => config('services.recaptcha.secret'),
+            'response' => $request->recaptcha_token,
+        ]);
+    
+        $responseData = $response->json();
+    
+        if (!$responseData['success']) {
+            return back()->withErrors(['recaptcha_token' => 'Error en reCAPTCHA']);
+        }
 
         $user = User::create([
             'name' => $request->name,
@@ -43,10 +60,6 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        event(new Registered($user));
-
-        Auth::login($user);
-
-        return redirect(RouteServiceProvider::VERIFY);
+        return redirect(RouteServiceProvider::LOGIN);
     }
 }
